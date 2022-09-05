@@ -1,0 +1,25 @@
+Machine learning is a field of study which finds patterns in known sample/training data to be able to predict outcomes for unknown inputs. It can be used in a variety of 
+applications from medicine, to analytics and security and betting.
+
+Ultimately, the confounding factor in all Machine Learning applications is the quality of the data. If the data is not labelled correctly, or largely incomplete, the 
+accuracy of the predictions will be questionable. When these models make it into real world machines that have real consequences, accuracy can play a big part. The Uber 
+self-driving car fatality was due to the Machine Learning models inaccurate assessment of the entities in view of the camera.
+
+
+
+Machine Learning would be a subset of AI because it uses the Artificial Intelligence to "learn". Artificial Intelligence is a much broader term that may encompass many 
+other fields of study.
+
+
+One example of a modern ML application is protien folding. Simulating protien folding in the traditional way is not feasible, and machine learning allows us to do much 
+more at a fraction of the computing power. Another application is the Chinese public surveillance system which uses Machine Learning to accurately determine a persons 
+characteristics, going so far as to be able to single out Uyghurs so that they can be spirited away to the concentration camps. This would also be infeasible using traditional 
+methods which would involve hiring thousands of people to scrawl through the videos and manually labelling individuals, as well as guessing their "features" from only a 
+low-quality video.
+
+In Machine Learning, an Observation is a row of data with multiple "features" each containing data. The data can be either Quantitative data, which is numerical/objective, 
+or Qualitative data that is non-numeric or subjective.
+
+I have been personally interested in Machine Learning since I found the Youtube channel "Two Minute Papers" where Dr.Karoly Zsolnai-Feher showcases the latest published 
+papers in AI, ML and other related fields in short, bite sized videos. If I continue to study this field in my higher studies, I would be most interested in finding more 
+general solutions to the Alignment problem.
