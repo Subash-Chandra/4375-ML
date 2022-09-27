@@ -1,0 +1,124 @@
+---
+title: "Classification R Notebook"
+author: "Subash Chandra  and Abigail SOlomon"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+```{r}
+#df <- income_evaluation
+
+df$education <- factor(df$education)
+df$race <- factor(df$race)
+df$sex <- factor(df$sex)
+
+df$income <- factor(df$income)
+
+set.seed(1)
+i <-sample(1:nrow(df),nrow(df)*.8,replace=FALSE)
+train <- df[i,]
+test <- df[-i,]
+```
+```{r}
+summary(train)
+colSums(is.na(train))
+str(train)
+names(train)
+head(train)
+```
+
+```{r,warning=FALSE}
+opar<- par()
+par(mfrow = c(1,2))
+hist(train$age, col = "mistyrose3",main = "Age of workers",xlab="Age")
+par(opar)
+```
+```{r,warning=FALSE}
+opar<- par()
+counts <- table(train$education)
+barplot(counts, xlab="Education", ylab="Frequency", col=c("seagreen","wheat","sienna3"))
+par(opar)
+```
+```{r}
+glm1 <- glm(income ~ education, data=train, family="binomial")
+summary(glm1)
+
+```
+* Here is the summary of the data. As can be seen, the ability to earn a high income seems to be very highly correlated with the level of education that someone has recieved.This is visible both in the fact that 9 of the 16 levels of Education are  triple starred. Even 1st-4th is 'd which means that there is even a correlation there , and that even someone who completed 1st-4th grade has better odds at earning $50K per year than someone who had only completed pre-school which has a P value of 0.89 and a std.error of 83.Lastly, sex seems to play a part as well, with both being White, and Male being the most highly rewarded traits, though the whiteness is several orders of magnitude less important than the maleness, it still gets 3 stars.
+
+* To determine if the model is useful, we can take the Null Deviance-Residual deviance to get a Chi of 70 on 3 degrees of freedom. This gives us a P value that is really really close to 0. This means our model should be really good right?
+
+```{r}
+probs <- predict(glm1, newdata=test, type="response")
+pred <- ifelse(probs>0.5, 1, 0)
+acc <- mean(pred==test$income)
+print(paste("accuracy = ", acc))
+table(pred, test$income)
+```
+
+* For some reason we still get an accuracy of 0. This makes no sense. It must not be testing correctly, but I can't figure out what the reason is.
+
+### Additional metrics/Receiver Operating Characterstics (ROC)
+
+The ROC is a curve that plots the true positive rate (TPR) against the false positive rate (FPR) at various threshold settings. The AUC is the area under the ROC curve. AUC values range from 0.5 for a
+classifier with no predictive value to 1.0 for a perfect classifier, in our case we get 0.7 - 0.8.
+
+```{r}
+library(ROCR)
+p <- predict(glm1, newdata=test, type="response")
+pr <- prediction(p, test$income)
+prf <- performance(pr, measure = "tpr", x.measure = "fpr")
+plot(prf)
+```
+
+```{r}
+auc <- performance(pr, measure = "auc")
+auc <- auc@y.values[[1]]
+auc
+```
+
+### Build a naive Bayes model
+
+The naive Bayes algorithm is in package e1071.
+we have a A-priori probabilities of 0.76 workers get less than 50k and 0.24 more than 50k
+We have conditional probability for the predictors,for example, the probability of getting more than 50k being a 5th-6th grade student is 0.002, similarly the probability of getting more than 50k having an occupation of prof-specialty is 0.24.
+For quantitative values, like age and sex, we get the mean and standard deviation.
+
+```{r}
+library(e1071)
+nb1 <- naiveBayes(income~., data=train)
+summary(nb1)
+```
+
+We predict on the test data, using parameter type equals class, and get our mean accuracy, which is 0.801, which is way better than what we get with logistic regression.
+
+### Evaluate on the test data
+
+```{r}
+p1 <- predict(nb1, newdata=test, type="class")
+table(p1, test$income)
+mean(p1==test$income)
+```
+*An accuracy of 82.4% through Naive bayes. This may be for a variety of reasons.The Naivette of the algorithm cannot be exploited because we are only evaluating a single variable. It is also possible that the Logistic Regression algorithm failed because it is not able to deal with the 16 discrete education levels against the 2 discrete income levels.
+
+### Extracting probabilities
+
+Extract the raw probabilities for easy interpretation, by putting raw instead of class
+
+```{r}
+p1_raw <- predict(nb1, newdata=test, type="raw")
+head(p1_raw)
+```
+### 3 g) The naive Bayes classifier has  good performance on a variety of learning problems, the main advantage of this method is its conceptual and computational simplicity. It handles both continuous and discrete data. Naive Bayes is better suited for categorical input variables than numerical variables, moreover, it  can be used for Binary as well as Multi-class Classifications. Naive Bayes primary weakness - attribute independence , that is it assumes that the presence of one feature in a class doesn’t affect the presence of another one, and it also assumes they contribute equally, it cannot learn the relationship between features and  the frequency-based probability estimate will be zero. Logistic regression’s benefit is that it is easy to implement, interpret, and very efficient to train, it is also used to estimate the relationship between a dependent variable and one or more independent variables, its main drawback is the assumption of linearity between the dependent variable and the independent variables, and we can’t also use it when we have a smaller number of observations compared to the number of features.
+
+### 3 h) The metrics used is the Receiver Operating Characteristic (ROC), it  gives the tradeoff between predicting true positives while avoiding false positives, a perfect classifier would shoot straight up from the origin since it classified all correctly. A related metric is AUC, the area under the curve. AUC values range from 0.5 for a classifier with no predictive value to 1.0 for a perfect classifier. It is important in assessing  the overall diagnostic performance of a test and to compare the performance of two or more diagnostic tests, it has a drawback that it makes difficult to assign the confidence scores, false-positive and false-negative diagnoses have different misclassification costs, and excessive ROC curve extrapolation is undesirable. We also used the caret package to output the confusion matrix and other statistics including the Kappa. Caret has a benefit that it helps us to select and rank  features,  train different types of algorithms using a simple train function, the layer of abstraction provides a common interface to train models in R. Caret’s weakness is that ???????????????

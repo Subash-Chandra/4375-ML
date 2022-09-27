@@ -1,0 +1,167 @@
+---
+title: "Regression R Notebook"
+author: "Subash Chandra  and Abigail SOlomon"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+
+library(rlang)
+library(dplyr)
+library(ggplot2)
+
+df <- diamonds
+df$cut <- factor(df$cut)
+df$color <-factor(df$color)
+df$clarity <-factor(df$color)
+```
+##Train/Test split
+```{r}
+
+set.seed(69)
+i <- sample(1:nrow(df), nrow(df)*0.8, replace=FALSE)
+train <- df[i,]
+test<-df[-i,]
+
+```
+##Data Exploration
+```{r}
+
+summary(train)
+
+```
+```{r}
+#Check for NAs
+
+colSums(is.na(train))
+
+```
+```{r}
+#structure
+str(train)
+
+```
+```{r}
+
+names(train)
+
+```
+```{r}
+
+head(train)
+
+```
+## "Informative graphs"
+```{r}
+#plot price vs carat
+ggplot(df, aes(price, carat))+
+  geom_point()+
+  geom_line()+
+  scale_x_continuous(n.breaks = 30)
+
+#I am not really sure how to scale the axis in this, but you can see the general increase in price as carats go up.
+```
+```{r}
+ggplot(df,aes(price,carat))+geom_bar(stat = "identity")
+
+# Here I think we see that there are many small diamonds that are still exorbitantly priced, and that carats are not quite reliable as an estimator of value.
+```
+
+
+
+##Linear Regression
+```{r}
+lm1 <- lm(formula = price ~ carat, data = df)
+summary(lm1)
+```
+* answer is ~7K per carat, which is ~accurate. real prices are anywhere from 2.5k-18k per carat.
+* The Standard error is ~13 which is not great, but not terrible, and the P value is sufficiently low that Carats seem to be a good predictor of the price of a diamond. A Multiple R^2 of 0.84 is pretty good, all things considered, and the low P value means that this model is pretty good, for the data that it was given.
+
+
+##Plot Residuals
+* In the Residuals vs Fitted graph, we can see that there is a line, but it is not followed very well. The model is relatively linear though, so its not terrible.
+* In the Q-Q graph, we can see that between [-2,2], the values almost perfectly follow the lines. Not sure what exactly this could mean. At least it's continous?
+* The Scale-location graph has a fairly constant slope, but the heavy clumping is a problem. 
+* There seems to be no red-dashed lines for the Cooks distance, so I'm not sure what to make of that. Maybe all the data is inside it. Maybe all the data is outside it. Nobody knows.
+* We have very low P Values, but this model is pretty terrible at actually predicting the value of the diamond.
+```{r}
+par(mfrow = c(2,2))
+plot(lm1)
+```
+
+##Multiple Linear Regression
+
+```{r}
+
+lm2 <- lm(price ~ carat + cut + clarity, data = df)
+summary(lm2)
+#residuals
+par(mfrow = c(2,2))
+plot(lm2)
+#summary
+summary(lm2)
+
+```
+
+```{r}
+lm3 <- lm(price ~ carat + cut + clarity + x + y + z + clarity + depth + table, data = df)
+summary(lm3)
+#residuals
+par(mfrow = c(2,2))
+plot(lm3)
+#summary
+summary(lm3)
+
+```
+
+
+###Predictions
+
+##Model 1
+```{r}
+pred1 <- predict(lm1,newdata = test)
+cor1 <- cor(pred1,test$price)
+mse1 <- mean((pred1 - test$price)^2)
+rmse1 <- sqrt(mse1)
+
+head(pred1)
+cor1
+mse1
+rmse1
+```
+##Model 2
+```{r}
+pred2 <- predict(lm2,newdata = test)
+cor2 <- cor(pred2,test$price)
+mse2 <- mean((pred2 - test$price)^2)
+rmse2 <- sqrt(mse2)
+
+head(pred2)
+cor2
+mse2
+rmse2
+```
+##Model 3
+```{r}
+pred3 <- predict(lm3,newdata = test)
+cor3 <- cor(pred3,test$price)
+mse3 <- mean((pred3 - test$price)^2)
+rmse3 <- sqrt(mse3)
+
+head(pred3)
+cor3
+mse3
+rmse3
+```
+*All the models had approximately the same correlation of between 92.3% and 93.9%.
+All the MSE and RMSE's are hilariously high. This could be for a variety of reasons. I believe that the reason is that the diamond market is highly monopolized and diamonds are an artificially limited commodity, and that the reason is definitely not that I have badly overfit my model to the excessively large dataset that I found.
+
+*Ultimately, the last model is the best because it is also able to take into account the color and other features of the Diamond to get a holistic view of it, and possibly even gaining value from knowing the X,Y,Z dimensions of the diamond, though this may actually negatively contribute due to the irregular nature of the shapes of diamonds, and the things they sit on.
+
+
+
