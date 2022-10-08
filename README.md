@@ -14,3 +14,9 @@ Code[bostonhousing.cpp](bostonhousing.cpp)
 
 Regression [PDF](regression.pdf)
 Classification - Knitting fails, but the code works. [Code](Classification.Rmd)
+
+# Logistic Regression and Bayes
+
+Logistic Regression [CPP code](LogisticRegression.cpp)
+Naive-Bayes [CPP Code](NaiveBayes.cpp)
+Logistic Regression and Naive Bayes [doc](Logistic_Regression_and_Naive_Bayes.docx)
