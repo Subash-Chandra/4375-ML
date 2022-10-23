@@ -33,12 +33,12 @@ Logistic Regression and Naive Bayes [doc](Logistic_Regression_and_Naive_Bayes.do
 
 Subash Chandra - SXC200027 , Aditi Chaudhari - APC180001 , Derrick Martin - DRM180001 , Abigail Solomon - tsm190000
 
-Q1 - Regression [- PDF ](regression.pdf)
+Q1 - Regression [- PDF ](/Similarity/regression.pdf)
 
-Q2 - Classification [- PDF ](classification.pdf)
+Q2 - Classification [- PDF ](/Similarity/classification.pdf)
 
-Q3 - Clustering [- PDF ](clustering.pdf)
+Q3 - Clustering [- PDF ](/Similarity/clustering.pdf)
 
-Q4 - PCA/LDA [- PDF ](pca-lda.pdf)
+Q4 - PCA/LDA [- PDF ](/Similarity/pca-lda.pdf)
 
-Q5 - Narrative doc [- DOCX ](similarity.docx)
+Q5 - Narrative doc [- DOCX ](/Similarity/similarity.docx)
