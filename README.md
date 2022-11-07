@@ -42,3 +42,8 @@ Q3 - Clustering [- PDF ](/Similarity/clustering.pdf)
 Q4 - PCA/LDA [- PDF ](/Similarity/pca-lda.pdf)
 
 Q5 - Narrative doc [- DOCX ](/Similarity/similarity.docx)
+
+
+# SKLearn
+
+SKLearn [PDF](sklearn.pdf)
